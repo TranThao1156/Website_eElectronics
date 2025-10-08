@@ -1,0 +1,70 @@
+<?php
+
+use App\Http\Controllers\LienHeController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\SanPhamController;
+use App\Http\Controllers\SanPhamMoiController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+// Route::get('/', function () {
+//     return view('user.home');
+// })->name('home');
+
+
+//Trang chủ
+Route::get('/', [SanPhamController::class, 'index'])->name('home');
+
+//hóa đơn
+Route::get('/checkout', function () {
+    return view('user.checkout');
+})->name('checkout');
+
+//Danh sách
+Route::get('/shop', function () {
+    return view('user.shop');
+})->name('shop');
+
+// Chi tiết
+Route::get('/single-product', function () {
+    return view('user.single-product');
+})->name('single-product');
+//Giỏ hàng
+Route::get('/cart', function () {
+    return view('user.cart');
+})->name('cart');
+
+//Liên hệ
+// Hiển thị form
+Route::get('/contact', [LienHeController::class, 'index'])->name('contact');
+
+// Lưu dữ liệu từ form
+Route::post('/contact', [LienHeController::class, 'store'])->name('contact.store');
+
+// Trang danh sách sản phẩm
+Route::get('/products', [SanPhamController::class, 'index'])->name('products.index');
+
+//Danh sách sản phẩm đã xem gần đây
+Route::get('/recently-viewed', [SanPhamController::class, 'recentlyViewed'])->name('recently.viewed');
+
+// Trang chi tiết sản phẩm
+Route::get('/products/{id}', [SanPhamController::class, 'show'])->name('products.show');
+
+//Giả lập thêm sản phẩm vào recently views
+Route::get('/test-add-view/{id}', function (Request $request, $id) {
+    $recentlyViewed = $request->session()->get('recently_viewed', []);
+
+    // Xóa trùng và thêm sản phẩm mới nhất lên đầu
+    $recentlyViewed = array_diff($recentlyViewed, [$id]);
+    array_unshift($recentlyViewed, $id);
+
+    // Giới hạn 5 sản phẩm
+    $recentlyViewed = array_slice($recentlyViewed, 0, 5);
+
+    $request->session()->put('recently_viewed', $recentlyViewed);
+
+    return redirect()->route('home')
+        ->with('success', "Đã thêm sản phẩm ID {$id} vào Recently Viewed!");
+});
+
+// Nhúng thêm routes backoffice
+require __DIR__.'/backoffice.php';
