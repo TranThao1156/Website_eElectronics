@@ -9,3 +9,4 @@ Route::prefix('backoffice')
             return view('layouts.layout_backoffice');
         })->name('backoffice');
     });
+
