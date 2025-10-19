@@ -62,7 +62,7 @@ Route::get('/test-add-view/{id}', function (Request $request, $id) {
 
     $request->session()->put('recently_viewed', $recentlyViewed);
 
-    return redirect()->route('home')
+    return redirect()->routec('home')
         ->with('success', "Đã thêm sản phẩm ID {$id} vào Recently Viewed!");
 });
 
